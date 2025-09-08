@@ -1,9 +1,16 @@
 ﻿using OpenAI;
 using OpenAI.Chat;
 using System.ClientModel;
+using Microsoft.Extensions.Configuration;
 
-// WARNING: This is insecure - we're hard-coding the token for demonstration
-var credential = "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"; // Your PAT here
+// Secure token retrieval using .NET Secret Manager
+var configuration = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
+var credential = configuration["GitHubToken"] 
+    ?? throw new InvalidOperationException(
+        "GitHub token not configured. Run: dotnet user-secrets set GitHubToken YOUR_NEW_TOKEN");
 
 var openAIOptions = new OpenAIClientOptions()
 {
@@ -12,8 +19,8 @@ var openAIOptions = new OpenAIClientOptions()
 
 var client = new ChatClient("openai/gpt-4o-mini", new ApiKeyCredential(credential), openAIOptions);
 
-Console.WriteLine("VSLIVE! 2025 - AI Chat Console");
-Console.WriteLine("================================");
+Console.WriteLine("VSLIVE! 2025 - AI Chat Console (Secure Version)");
+Console.WriteLine("===============================================");
 Console.WriteLine("Ask me anything about C# and .NET! (type 'exit' to quit)");
 
 while (true)
@@ -21,7 +28,7 @@ while (true)
     Console.Write("\nYour question: ");
     var userInput = Console.ReadLine();
     
-    if (string.IsNullOrEmpty(userInput) || userInput.ToLower() == "exit")
+    if (string.IsNullOrEmpty(userInput) || userInput.ToLower() == "q")
         break;
 
     List<ChatMessage> messages = new List<ChatMessage>()
@@ -46,6 +53,11 @@ while (true)
     catch (Exception ex)
     {
         Console.WriteLine($"Error: {ex.Message}");
+        if (ex.Message.Contains("GitHub token not configured"))
+        {
+            Console.WriteLine("Please create a new GitHub PAT and configure it using:");
+            Console.WriteLine("dotnet user-secrets set GitHubToken YOUR_NEW_TOKEN");
+        }
     }
 }
 
