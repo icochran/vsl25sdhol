@@ -57,7 +57,8 @@ while (true)
             Console.WriteLine("dotnet user-secrets set GitHubToken YOUR_NEW_TOKEN");
         }
     }
-    static void DisplayWelcomeMessage()
+}
+static void DisplayWelcomeMessage()
    {
        Console.WriteLine("VSLIVE! 2025 - AI Chat Console (Secure Version)");
        Console.WriteLine("===============================================");
@@ -68,6 +69,4 @@ while (true)
        Console.WriteLine();
        Console.WriteLine("Ask me anything about C# and .NET! (type 'exit' to quit)");
    }
-}
-
 Console.WriteLine("\nThanks for using the AI Chat Console!");
